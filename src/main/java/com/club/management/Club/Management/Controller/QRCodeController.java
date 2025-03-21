@@ -1,5 +1,7 @@
 package com.club.management.Club.Management.Controller;
 
+import com.club.management.Club.Management.Model.QRCodeEntity;
+import com.club.management.Club.Management.Repository.QRCodeRepository;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -19,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/payment")
@@ -27,9 +30,8 @@ public class QRCodeController {
     @Autowired
     QRCodeRepository qrCodeRepository;
 
-    @PostMapping("/generateOR")
-    public ResponseEntity<String> generateQR(@RequestParam String userId, @RequestParam String eventId){
-
+    @PostMapping("/generateQR")
+    public ResponseEntity<byte[]> generateQRCode(@RequestParam String userId, @RequestParam String eventId) {
         try {
             String qrContent = userId + "|" + eventId + "|" + System.currentTimeMillis();
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
@@ -41,31 +43,44 @@ public class QRCodeController {
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(qrImage, "png", baos);
-            String qrBase64 = Base64.getEncoder().encodeToString(baos.toByteArray());
+            byte[] qrBytes = baos.toByteArray();
 
-            QRCodeEntity qrCodeEntity = new QRCodeEntity(userId, eventId, qrContent, false);
+            // Save QR Code details in the database
+            QRCodeEntity qrCodeEntity = new QRCodeEntity(null, userId, eventId, qrContent, false);
             qrCodeRepository.save(qrCodeEntity);
 
-            return new ResponseEntity<>("data:image/png;base64," + qrBase64, HttpStatus.OK);
-        } catch (Exception e){
+            // Return image as a downloadable response
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=qr_code.png")
+                    .header("Content-Type", "image/png")
+                    .body(qrBytes);
+        } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Error generating OR Code", HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(500).body(null);
         }
     }
+
 
 
     @PostMapping("/validateQR")
     public ResponseEntity<String> validateQRCode(@RequestParam String qrContent) {
         Optional<QRCodeEntity> qrCodeEntity = qrCodeRepository.findByQrContent(qrContent);
 
-        if (qrCodeEntity.isPresent() && !qrCodeEntity.get().isUsed()) {
-            qrCodeEntity.get().setUsed(true);
-            qrCodeRepository.save(qrCodeEntity.get());
-            return ResponseEntity.ok("QR Code Validated Successfully");
+        if (qrCodeEntity.isPresent()) {
+            QRCodeEntity qr = qrCodeEntity.get();
+
+            if (!qr.isUsed()) {
+                qr.setUsed(true);
+                qrCodeRepository.save(qr); // Mark QR as used
+                return ResponseEntity.ok("✅ QR Code Validated Successfully!");
+            } else {
+                return ResponseEntity.status(400).body("⚠️ QR Code Already Used!");
+            }
         } else {
-            return ResponseEntity.status(400).body("Invalid or Already Used QR Code");
+            return ResponseEntity.status(400).body("❌ Invalid QR Code!");
         }
     }
+
 
     private void markQRAsUsed(String userId, String eventId) {
         System.out.println("OR Code marked as used for user : "+userId);
