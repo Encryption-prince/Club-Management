@@ -8,10 +8,10 @@
 		<version>3.4.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.club.management</groupId>
+	<groupId>com.payment.gateway</groupId>
 	<artifactId>Payment_Gateway_Sys</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Club-Management</name>
+	<name>Payment_Gateway_Sys</name>
 	<description>Integration of payment gateway and ai chatbot</description>
 	<url/>
 	<licenses>
