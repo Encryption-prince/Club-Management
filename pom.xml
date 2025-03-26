@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.club.management</groupId>
-	<artifactId>Club-Management</artifactId>
+	<artifactId>Payment_Gateway_Sys</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Club-Management</name>
 	<description>Integration of payment gateway and ai chatbot</description>
