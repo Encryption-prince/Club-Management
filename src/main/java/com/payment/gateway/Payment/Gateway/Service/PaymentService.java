@@ -11,6 +11,8 @@ public class PaymentService {
 
     private final RazorpayClient razorpayClient;
 
+    @Value("${razorpay.api.secret}")
+    private String razorpaySecret;
     public PaymentService(@Value("${razorpay.keyId}") String keyId,
                           @Value("${razorpay.keySecret}") String keySecret) throws Exception {
         this.razorpayClient = new RazorpayClient(keyId, keySecret);
@@ -28,12 +30,11 @@ public class PaymentService {
     }
 
     public boolean verifyPayment(String razorpayOrderId, String paymentId, String signature) {
-        try {
-            String secret = "key_secret";
-            String payload = razorpayOrderId + "|" + paymentId;
-            return Utils.verifySignature(payload, signature, secret);
-        } catch (Exception e) {
-            return false;
+            try {
+                String payload = razorpayOrderId + "|" + paymentId;
+                return Utils.verifySignature(payload, signature, razorpaySecret);
+            } catch (Exception e) {
+                return false;
         }
     }
 
