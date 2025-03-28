@@ -1,4 +1,4 @@
-package com.club.management.Club.Management.Model;
+package com.payment.gateway.Payment.Gateway.Model;
 
 
 import jakarta.persistence.*;

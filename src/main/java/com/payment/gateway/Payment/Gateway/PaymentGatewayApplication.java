@@ -1,13 +1,13 @@
-package com.club.management.Club.Management;
+package com.payment.gateway.Payment.Gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ClubManagementApplication {
+public class PaymentGatewayApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ClubManagementApplication.class, args);
+		SpringApplication.run(PaymentGatewayApplication.class, args);
 	}
 
 }

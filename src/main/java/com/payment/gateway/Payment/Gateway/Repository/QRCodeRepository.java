@@ -1,6 +1,6 @@
-package com.club.management.Club.Management.Repository;
+package com.payment.gateway.Payment.Gateway.Repository;
 
-import com.club.management.Club.Management.Model.QRCodeEntity;
+import com.payment.gateway.Payment.Gateway.Model.QRCodeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

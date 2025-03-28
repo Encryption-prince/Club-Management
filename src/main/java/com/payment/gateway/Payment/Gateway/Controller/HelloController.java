@@ -1,4 +1,4 @@
-package com.club.management.Club.Management.Controller;
+package com.payment.gateway.Payment.Gateway.Controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
